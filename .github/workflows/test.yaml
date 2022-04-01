@@ -1,0 +1,12 @@
+name: Build Docker image
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+
+      - if: ${{ !startsWith(github.event.head_commit.message, 'docs') && !startsWith(github.event.head_commit.message, 'ci') }}
+        run: echo ok
