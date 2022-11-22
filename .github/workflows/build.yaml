@@ -57,9 +57,8 @@ jobs:
     uses: ./.github/workflows/reusable_docker-build-and-push.yaml
     secrets: inherit # pass all secrets to the called workflow
     with:
-      # publish only on push to main, except if only ci changed
+      # publish only on push to main
       publish: >- 
         ${{ startsWith(github.ref, 'refs/tags/') ||
-            (github.ref == 'refs/heads/main' &&
-             github.event_name == 'push' &&
-             !startsWith(github.event.head_commit.message, 'ci')) }}
+            (github.ref == 'refs/heads/main' && github.event_name == 'push') }}
+      publish_dockerhub: true

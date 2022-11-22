@@ -18,10 +18,12 @@ jobs:
           extra-files: |
             version.txt
 
-  publish-docker-iamge:
+  publish-docker-image:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
     uses: ./.github/workflows/reusable_docker-build-and-push.yaml
+    secrets: inherit
     with:
       publish: true
+      publish_dockerhub: true
       version: ${{ needs.release-please.outputs.tag }}
