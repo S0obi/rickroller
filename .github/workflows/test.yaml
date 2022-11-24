@@ -31,6 +31,17 @@ jobs:
             latest=false
 
       - name: Add Docker Hub tags
+        id: tags
         run: |
-          tags=x=$(echo "${{ steps.meta.outputs.tags }}" | awk '{ print $0; sub("ghcr.io", "docker.io", $0); print $0 }')
+          echo "Old tags: '${{ steps.meta.outputs.tags }}'"
+          tags=$(echo "${{ steps.meta.outputs.tags }}" | awk '{ print $0; sub("ghcr.io", "docker.io", $0); print $0 }')
           echo "New tags: '$tags'"
+          #tags="${tags//$'\n'/'%0A'}"
+          #echo "tags='$tags'" >> $GITHUB_OUTPUT
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$tags" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Output
+        run: |
+          echo "tags out: ${{ steps.tags.outputs.tags }}"
