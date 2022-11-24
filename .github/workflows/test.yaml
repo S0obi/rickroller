@@ -1,0 +1,36 @@
+name: Test meta
+
+# When calling this workflow, ensure you use
+#   secrets: inherit
+# So the DOCKER_USERNAME and DOCKER_PASSWORD are available.
+
+on:
+  push:
+    branches:
+     - lala
+jobs:
+  lala:
+    name: Test meta
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ inputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
+            type=semver,pattern={{major}},value=${{ inputs.version }}
+            type=ref,event=branch,suffix=-{{ sha }}
+            type=ref,event=pr
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/lala' || startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=false
+
+      - name: Add Docker Hub tags
+        run: |
+          tags=x=$(echo "${{ steps.meta.outputs.tags }}" | awk '{ print $0; sub("ghcr.io", "docker.io", $0); print $0 }')
+          echo "New tags: '$tags'"
