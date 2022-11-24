@@ -5,7 +5,7 @@ name: Lala
 # So the DOCKER_USERNAME and DOCKER_PASSWORD are available.
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       publish:
         type: boolean
@@ -35,3 +35,4 @@ jobs:
           if [ "$condition" ]; then echo simple; fi 
           if [ "$condition" -eq 'true' ]; then echo string; fi
           if [[ "$condition" ]]; then echo double; fi 
+          if [[ "$condition" == 'true' ]]; then echo double string; fi 

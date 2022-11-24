@@ -10,8 +10,17 @@ on:
      - lala
 jobs:
   lala:
+    uses: ./.github/workflows/lala.yaml
+    secrets: inherit # pass all secrets to the called workflow
+    with:
+      # publish only on push to main
+      publish: true
+      publish_dockerhub: true
+
+  tags:
     name: Test meta
     runs-on: ubuntu-latest
+    if: false
     steps:
       - uses: actions/checkout@v3
 
