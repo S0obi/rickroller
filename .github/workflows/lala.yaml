@@ -1,0 +1,37 @@
+name: Lala
+
+# When calling this workflow, ensure you use
+#   secrets: inherit
+# So the DOCKER_USERNAME and DOCKER_PASSWORD are available.
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        description: Wether to publish the image to Github Registry
+        required: false
+        default: false
+      publish_dockerhub:
+        type: boolean
+        description: Wether to also publish to Docker Hub (ignored if publish=false)
+        required: false
+        default: false
+      version:
+        type: string
+        required: false
+        description: the string to extract semver labels from. If empty, the ref/tag will be used (if on.tag trigger).
+        default: ''
+
+jobs:
+  build_and_push:
+    name: Docker Build and Push
+    runs-on: ubuntu-latest
+    steps:
+      - name: lala
+        run: | 
+          condition='${{ inputs.publish && inputs.publish_dockerhub }}'
+          echo "c=$condition"
+          if [ "$condition" ]; then echo simple; fi 
+          if [ "$condition" -eq 'true' ]; then echo string; fi
+          if [[ "$condition" ]]; then echo double; fi 
