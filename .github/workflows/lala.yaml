@@ -12,11 +12,11 @@ on:
         description: Wether to publish the image to Github Registry
         required: false
         default: false
-      publish_dockerhub:
-        type: boolean
-        description: Wether to also publish to Docker Hub (ignored if publish=false)
+      dockerhub_tags:
+        type: string
+        description: Tags to push to Docker Hub (only if publish=true)
         required: false
-        default: false
+        default: ''
       version:
         type: string
         required: false
@@ -48,8 +48,9 @@ jobs:
         id: tags
         run: |
           tags='${{ steps.meta.outputs.tags }}'
-          if [[ '${{ inputs.publish && inputs.publish_dockerhub }}' == 'true' ]]; then
-            tags=$(echo "$tags" | awk '{ print $0; sub("ghcr.io", "docker.io", $0); print $0 }')
+          if [ -n '${{ inputs.dockerhub_tags }}' ]; then
+            dockertags=$(echo '${{ inputs.dockerhub_tags }}' | tr ' ' '\n' | awk '{ print "docker.io/${{ github.repository }}:" $0 }')
+            tags="$tags\n$dockertags"
           fi
           echo -e "Using image tags:\n$tags"
           echo "tags<<EOF" >> $GITHUB_OUTPUT
