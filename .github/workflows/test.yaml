@@ -15,7 +15,7 @@ jobs:
     with:
       # publish only on push to main
       publish: true
-      dockerhub_tags: ${{ github.ref == 'refs/heads/lala' && 'latest' || '' }}
+      dockerhub_tags: ${{ github.ref == 'refs/heads/lala-not' && 'latest' || '' }}
 
   tags:
     name: Test meta
