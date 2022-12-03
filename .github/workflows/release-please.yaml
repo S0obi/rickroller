@@ -25,5 +25,5 @@ jobs:
     secrets: inherit # pass all secrets to the called workflow
     with:
       publish: true
-      publish_dockerhub: true
       version: ${{ needs.release-please.outputs.tag }}
+      publish_dockerhub: true
