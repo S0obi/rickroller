@@ -62,7 +62,7 @@ jobs:
         id: tags
         run: |
           echo "tags<<EOF" >> $GITHUB_OUTPUT
-          echo -e '${{ steps.meta.outputs.tags }}' >> $GITHUB_OUTPUT
+          echo '${{ steps.meta.outputs.tags }}' >> $GITHUB_OUTPUT
           if [ -n '${{ inputs.publish_dockerhub }}' ]; then
             echo '${{ steps.meta_dockerhub.outputs.tags }}' >> $GITHUB_OUTPUT
           fi
