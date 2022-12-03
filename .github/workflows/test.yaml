@@ -15,7 +15,7 @@ jobs:
     with:
       # publish only on push to main
       publish: true
-      publish_dockerhub: false
+      publish_dockerhub: true
 
   tags:
     name: Test meta
