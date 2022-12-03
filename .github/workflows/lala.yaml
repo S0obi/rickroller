@@ -29,6 +29,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: test Docker
+        run: |
+          docker run --rm -d --name rickroller -p 8080:8080 derlin/rickroller:latest
+          timeout 10s bash -c 'until curl http://localhost:8080; do sleep 1; done'
+          docker stop rickroller
+
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v3
