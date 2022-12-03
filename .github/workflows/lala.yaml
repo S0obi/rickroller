@@ -12,11 +12,11 @@ on:
         description: Wether to publish the image to Github Registry
         required: false
         default: false
-      dockerhub_tags:
-        type: string
-        description: Tags to push to Docker Hub (only if publish=true)
+      publish_dockerhub:
+        type: boolean
+        description: Whether to publish the image to Docker Hub (only if publish=true)
         required: false
-        default: ''
+        default: false
       version:
         type: string
         required: false
@@ -44,15 +44,30 @@ jobs:
           flavor: |
             latest=false
 
+      - name: Extract Docker metadata for Docker Hub
+        if: ${{ inputs.publish_dockerhub }}
+        id: meta_dockerhub
+        uses: docker/metadata-action@v3
+        with:
+          images: docker.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ inputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
+            type=semver,pattern={{major}},value=${{ inputs.version }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/lala' || startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=false
+
       - name: Add Docker Hub tags
         id: tags
         run: |
-          tags='${{ steps.meta.outputs.tags }}'
-          if [ -n '${{ inputs.dockerhub_tags }}' ]; then
-            dockertags=$(echo '${{ inputs.dockerhub_tags }}' | tr ' ' '\n' | awk '{ print "docker.io/${{ github.repository }}:" $0 }')
-            tags="$tags\n$dockertags"
-          fi
-          echo -e "Using image tags:\n$tags"
           echo "tags<<EOF" >> $GITHUB_OUTPUT
-          echo "$tags" >> $GITHUB_OUTPUT
+          echo -e '${{ steps.meta.outputs.tags }}' >> $GITHUB_OUTPUT
+          if [ -n '${{ inputs.publish_dockerhub }}' ]; then
+            echo '${{ steps.meta_dockerhub.outputs.tags }}' >> $GITHUB_OUTPUT
+          fi
           echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Print tags
+        run: |
+          echo '${{ steps.tags.outputs.tags }}'
